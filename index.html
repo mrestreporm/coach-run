@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<!-- PWA / Add to Home Screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Coach">
+<meta name="theme-color" content="#000000">
+
+<!-- App Icon (SVG embedded as data URI) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' fill='%23000'/><text x='90' y='115' text-anchor='middle' font-family='-apple-system,system-ui' font-size='80' font-weight='800' fill='%23fff'>21</text><text x='90' y='150' text-anchor='middle' font-family='-apple-system,system-ui' font-size='18' font-weight='600' fill='%2300d97e' letter-spacing='4'>BGT</text></svg>">
+
+<title>Coach</title>
+
+<style>
+  :root {
+    --bg: #000000;
+    --bg-1: #0c0c0c;
+    --bg-2: #161616;
+    --bg-3: #202020;
+    --line: #1f1f1f;
+    --line-2: #2a2a2a;
+    --ink: #ffffff;
+    --ink-2: #b8b8b8;
+    --ink-3: #6e6e6e;
+    --ink-4: #444444;
+    --green: #00d97e;
+    --red: #ff2d55;
+    --yellow: #ffcc00;
+    --blue: #0a84ff;
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    background: var(--bg);
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+    overflow-x: hidden;
+    min-height: 100vh;
+    padding-top: var(--safe-top);
+    padding-bottom: calc(var(--safe-bottom) + 24px);
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* TYPOGRAPHY */
+  .label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .label-bright {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .num-xl {
+    font-size: 84px;
+    font-weight: 200;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    font-feature-settings: "tnum";
+  }
+  .num-lg {
+    font-size: 48px;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .num-md {
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .num-sm {
+    font-size: 16px;
+    font-weight: 500;
+    font-feature-settings: "tnum";
+  }
+  .heading {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .body {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .caption {
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+
+  /* HEADER */
+  header {
+    padding: 20px 20px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .header-name {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .header-week {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+
+  /* HERO COUNTDOWN */
+  .hero {
+    padding: 24px 20px 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 12px;
+  }
+  .hero-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .hero-goal {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--green);
+  }
+  .hero-num {
+    font-size: 96px;
+    font-weight: 200;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    font-feature-settings: "tnum";
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 12px;
+  }
+  .hero-unit {
+    font-size: 13px;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .hero-date {
+    font-size: 13px;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .hero-progress {
+    margin-top: 20px;
+    height: 2px;
+    background: var(--line-2);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .hero-progress-fill {
+    height: 100%;
+    background: var(--ink);
+    border-radius: 1px;
+    width: 21.4%;
+  }
+  .hero-progress-meta {
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  /* TODAY CARD */
+  .today {
+    background: var(--bg-2);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .today-top {
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--bg-3);
+  }
+  .today-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .today-day {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .today-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--green);
+    background: rgba(0, 217, 126, 0.12);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .today-date {
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+  .today-body {
+    padding: 16px 18px 18px;
+  }
+  .today-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .today-desc {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .today-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--bg-3);
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .stat-value {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-feature-settings: "tnum";
+  }
+  .stat-value.muted-unit {
+    font-weight: 500;
+  }
+  .stat-value .small {
+    font-size: 13px;
+    color: var(--ink-3);
+    font-weight: 500;
+    margin-left: 2px;
+  }
+
+  /* WEEK PLAN */
+  .week-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .day-row {
+    background: var(--bg-2);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: background 0.15s;
+  }
+  .day-row.rest {
+    background: var(--bg-1);
+  }
+  .day-row.today-day-row {
+    background: var(--bg-3);
+  }
+  .day-row.completed {
+    opacity: 0.4;
+  }
+  .day-row-head {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+  }
+  .day-letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-2);
+    flex-shrink: 0;
+  }
+  .day-row.rest .day-letter {
+    background: transparent;
+    border: 1px dashed var(--line-2);
+    color: var(--ink-4);
+  }
+  .day-row.today-day-row .day-letter {
+    background: var(--green);
+    color: var(--bg);
+  }
+  .day-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .day-info-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 2px;
+  }
+  .day-name {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .day-km {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-3);
+    font-feature-settings: "tnum";
+  }
+  .day-session {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .day-row.rest .day-session {
+    color: var(--ink-3);
+    font-weight: 400;
+  }
+  .day-toggle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .day-row.open .day-toggle {
+    transform: rotate(180deg);
+  }
+  .day-row.rest .day-toggle {
+    display: none;
+  }
+  .day-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .day-row.open .day-detail {
+    max-height: 600px;
+  }
+  .day-detail-inner {
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--bg-3);
+    padding-top: 14px;
+    margin-top: 2px;
+  }
+  .detail-desc {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .detail-cell {
+    background: var(--bg-1);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .detail-cell-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .detail-cell-value {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-feature-settings: "tnum";
+  }
+  .detail-note {
+    background: rgba(255, 45, 85, 0.08);
+    border-left: 2px solid var(--red);
+    padding: 10px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  /* RULES */
+  .rules {
+    margin-top: 16px;
+    background: var(--bg-2);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .rules-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 10px;
+  }
+  .rules-list {
+    list-style: none;
+    padding: 0;
+  }
+  .rules-list li {
+    font-size: 13px;
+    color: var(--ink-2);
+    padding: 6px 0;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .rules-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 4px;
+    height: 4px;
+    background: var(--red);
+    border-radius: 50%;
+  }
+
+  /* STATS GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .metric {
+    background: var(--bg-2);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .metric-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .metric-value .unit {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-3);
+    margin-left: 4px;
+  }
+  .metric-extra {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 6px;
+  }
+  .metric-value.green { color: var(--green); }
+  .metric-value.red { color: var(--red); }
+
+  /* PR */
+  .pr-card {
+    background: var(--bg-2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 8px;
+  }
+  .pr-card-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .pr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bg-3);
+  }
+  .pr-row:last-child { border-bottom: none; }
+  .pr-dist {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+  }
+  .pr-time {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    font-feature-settings: "tnum";
+  }
+
+  /* ZONES */
+  .zone-card {
+    background: var(--bg-2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .zone-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--bg-3);
+  }
+  .zone-row:last-child { border-bottom: none; }
+  .zone-bar {
+    width: 4px;
+    height: 28px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .zone-bar.z1 { background: #6e6e6e; }
+  .zone-bar.z2 { background: var(--green); }
+  .zone-bar.z3 { background: var(--yellow); }
+  .zone-bar.z4 { background: #ff8c00; }
+  .zone-bar.z5 { background: var(--red); }
+  .zone-bar.z6 { background: #c70039; }
+  .zone-info { flex: 1; min-width: 0; }
+  .zone-name {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+  .zone-num {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .zone-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .zone-desc {
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+  .zone-bpm {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    font-feature-settings: "tnum";
+    flex-shrink: 0;
+  }
+
+  /* PACES */
+  .pace-card {
+    background: var(--bg-2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .pace-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--bg-3);
+  }
+  .pace-row:last-child { border-bottom: none; }
+  .pace-row.target {
+    background: rgba(0, 217, 126, 0.06);
+  }
+  .pace-name {
+    font-size: 13px;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+  .pace-row.target .pace-name {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .pace-row.target .pace-name::before {
+    content: '◆ ';
+    color: var(--green);
+  }
+  .pace-value {
+    font-size: 14px;
+    font-weight: 500;
+    font-feature-settings: "tnum";
+    letter-spacing: -0.01em;
+  }
+  .pace-row.target .pace-value {
+    color: var(--green);
+  }
+
+  /* ACCORDION */
+  .acc {
+    background: var(--bg-2);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+  .acc-head {
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  .acc-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .acc-icon {
+    color: var(--ink-3);
+    transition: transform 0.25s;
+  }
+  .acc.open .acc-icon { transform: rotate(180deg); color: var(--ink); }
+  .acc-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .acc.open .acc-content { max-height: 2000px; }
+  .acc-body {
+    padding: 0 16px 14px;
+    border-top: 1px solid var(--bg-3);
+    padding-top: 12px;
+  }
+
+  /* MEAL ITEMS */
+  .item-row {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--bg-3);
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .item-desc {
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .item-meta {
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+    font-feature-settings: "tnum";
+  }
+
+  /* EXERCISES */
+  .ex-list-meta {
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--bg-3);
+  }
+  .ex {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--bg-3);
+  }
+  .ex:last-child { border-bottom: none; }
+  .ex-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--bg-3);
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .ex-content { flex: 1; }
+  .ex-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ex-name .itb-tag {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.08em;
+    background: rgba(0, 217, 126, 0.12);
+    padding: 2px 5px;
+    border-radius: 3px;
+  }
+  .ex-reps {
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+
+  /* NOTES */
+  .notes-box {
+    background: var(--bg-2);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .notes-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.55;
+    resize: vertical;
+    min-height: 100px;
+    outline: none;
+  }
+  .notes-input::placeholder {
+    color: var(--ink-4);
+  }
+  .notes-status {
+    font-size: 10px;
+    color: var(--green);
+    margin-top: 6px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .notes-status.show { opacity: 1; }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 24px 8px;
+    text-align: center;
+  }
+  .footer-quote {
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 auto 10px;
+    font-style: italic;
+  }
+  .footer-author {
+    font-size: 10px;
+    color: var(--ink-4);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  section, .hero { animation: fadeIn 0.5s ease backwards; }
+  .hero { animation-delay: 0.05s; }
+  section:nth-of-type(1) { animation-delay: 0.1s; }
+  section:nth-of-type(2) { animation-delay: 0.15s; }
+  section:nth-of-type(3) { animation-delay: 0.2s; }
+  section:nth-of-type(4) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="header-left">
+    <div class="header-dot"></div>
+    <div class="header-name">MATEO</div>
+  </div>
+  <div class="header-week">SEM 03 / 14</div>
+</header>
+
+<!-- HERO COUNTDOWN -->
+<div class="hero">
+  <div class="hero-row">
+    <div class="hero-label">DAYS TO RACE</div>
+    <div class="hero-goal">SUB 1:30</div>
+  </div>
+  <div class="hero-num" id="days-count">82</div>
+  <div class="hero-meta">
+    <div class="hero-unit">DÍAS</div>
+    <div class="hero-date">26 JUL 2026 · BOGOTÁ</div>
+  </div>
+  <div class="hero-progress">
+    <div class="hero-progress-fill"></div>
+  </div>
+  <div class="hero-progress-meta">
+    <div>WEEK 3</div>
+    <div>21%</div>
+    <div>WEEK 14</div>
+  </div>
+</div>
+
+<!-- NEXT SESSION -->
+<section>
+  <div class="section-head">
+    <div class="label">PRÓXIMA SESIÓN</div>
+  </div>
+  <div class="today">
+    <div class="today-top">
+      <div class="today-top-row">
+        <div class="today-day">MARTES</div>
+        <div class="today-tag">PRÓXIMO</div>
+      </div>
+      <div class="today-date">05 · MAY · 2026</div>
+    </div>
+    <div class="today-body">
+      <div class="today-title">7 KM Z2 · Fuerza A</div>
+      <div class="today-desc">
+        7 km fácil zona 2 en la mañana. Circuito A en la noche, en casa con bandas. FC techo 150 — si suena la alarma del Coros, frenas.
+      </div>
+      <div class="today-stats">
+        <div class="stat">
+          <div class="stat-label">DISTANCIA</div>
+          <div class="stat-value">7<span class="small">km</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">FC TECHO</div>
+          <div class="stat-value">150<span class="small">bpm</span></div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">PACE</div>
+          <div class="stat-value">5:25–5:45</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">ZAPATILLA</div>
+          <div class="stat-value">Nimbus</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEEK PLAN -->
+<section>
+  <div class="section-head">
+    <div class="label">SEMANA 03</div>
+    <div class="caption">35 km · 5 sesiones</div>
+  </div>
+  <div class="week-list">
+
+    <div class="day-row rest">
+      <div class="day-row-head">
+        <div class="day-letter">L</div>
+        <div class="day-info">
+          <div class="day-info-top">
+            <div class="day-name">LUN · 04 MAY</div>
+            <div class="day-km">—</div>
+          </div>
+          <div class="day-session">Descanso · movilidad 10 min</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-row" onclick="toggleDay(this)">
+      <div class="day-row-head">
+        <div class="day-letter">M</div>
+        <div class="day-info">
+          <div class="day-info-top">
+            <div class="day-name">MAR · 05 MAY</div>
+            <div class="day-km">7 KM</div>
+          </div>
+          <div class="day-session">7 km Z2 + Fuerza A noche</div>
+        </div>
+        <div class="day-toggle">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="day-detail">
+        <div class="day-detail-inner">
+          <div class="detail-desc">
+            7 km fácil Z2 en la mañana. Circuito A en la noche, en casa con bandas. Pre: banano + sorbo café. Post: foam roller 5 min + desayuno completo.
+          </div>
+          <div class="detail-grid">
+            <div class="detail-cell">
+              <div class="detail-cell-label">DISTANCIA</div>
+              <div class="detail-cell-value">7 km</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">FC TECHO</div>
+              <div class="detail-cell-value">150 bpm</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">PACE</div>
+              <div class="detail-cell-value">5:25–5:45</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">ZAPATILLA</div>
+              <div class="detail-cell-value">Nimbus 26</div>
+            </div>
+          </div>
+          <div class="detail-note">
+            Si la alarma de FC suena en el Coros, frenas. Sin debate, sin ego.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-row rest">
+      <div class="day-row-head">
+        <div class="day-letter">M</div>
+        <div class="day-info">
+          <div class="day-info-top">
+            <div class="day-name">MIÉ · 06 MAY</div>
+            <div class="day-km">—</div>
+          </div>
+          <div class="day-session">Descanso · movilidad 15 min</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-row" onclick="toggleDay(this)">
+      <div class="day-row-head">
+        <div class="day-letter">J</div>
+        <div class="day-info">
+          <div class="day-info-top">
+            <div class="day-name">JUE · 07 MAY</div>
+            <div class="day-km">7 KM</div>
+          </div>
+          <div class="day-session">7 km + 6×30" pickups</div>
+        </div>
+        <div class="day-toggle">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="day-detail">
+        <div class="day-detail-inner">
+          <div class="detail-desc">
+            <strong>Estructura:</strong> 2 km calentamiento Z2 → 6 × (30" pickup + 90" trote suave) → 2 km enfriamiento. Pickups a ~80% esfuerzo, NO sprints.
+          </div>
+          <div class="detail-grid">
+            <div class="detail-cell">
+              <div class="detail-cell-label">DISTANCIA</div>
+              <div class="detail-cell-value">7 km</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">FC BASE</div>
+              <div class="detail-cell-value">&lt;150 bpm</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">PACE BASE</div>
+              <div class="detail-cell-value">5:25–5:45</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">ZAPATILLA</div>
+              <div class="detail-cell-value">Boston 12</div>
+            </div>
+          </div>
+          <div class="detail-note">
+            En los pickups la FC sube libre. Mantén el techo solo en base y enfriamiento.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-row" onclick="toggleDay(this)">
+      <div class="day-row-head">
+        <div class="day-letter">V</div>
+        <div class="day-info">
+          <div class="day-info-top">
+            <div class="day-name">VIE · 08 MAY</div>
+            <div class="day-km">6 KM</div>
+          </div>
+          <div class="day-session">6 km Z2 + Fuerza B noche</div>
+        </div>
+        <div class="day-toggle">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="day-detail">
+        <div class="day-detail-inner">
+          <div class="detail-desc">
+            6 km fácil Z2 en la mañana. Circuito B en la noche. Cena temprano (7-8 PM) con buenos carbos para preparar el long run del domingo.
+          </div>
+          <div class="detail-grid">
+            <div class="detail-cell">
+              <div class="detail-cell-label">DISTANCIA</div>
+              <div class="detail-cell-value">6 km</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">FC TECHO</div>
+              <div class="detail-cell-value">150 bpm</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">PACE</div>
+              <div class="detail-cell-value">5:25–5:45</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">ZAPATILLA</div>
+              <div class="detail-cell-value">Nimbus 26</div>
+            </div>
+          </div>
+          <div class="detail-note">
+            Cuida hoy la calidad para llegar fresco al fin de semana.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-row" onclick="toggleDay(this)">
+      <div class="day-row-head">
+        <div class="day-letter">S</div>
+        <div class="day-info">
+          <div class="day-info-top">
+            <div class="day-name">SÁB · 09 MAY</div>
+            <div class="day-km">4 KM</div>
+          </div>
+          <div class="day-session">4 km recovery muy fácil</div>
+        </div>
+        <div class="day-toggle">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="day-detail">
+        <div class="day-detail-inner">
+          <div class="detail-desc">
+            Trote regenerativo, no entrenamiento. Si te sientes muy cansado: caminar. Cena con buenos carbos — mañana es la sesión clave.
+          </div>
+          <div class="detail-grid">
+            <div class="detail-cell">
+              <div class="detail-cell-label">DISTANCIA</div>
+              <div class="detail-cell-value">4 km</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">FC TECHO</div>
+              <div class="detail-cell-value">140 bpm</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">PACE</div>
+              <div class="detail-cell-value">5:50–6:10</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">ZAPATILLA</div>
+              <div class="detail-cell-value">Nimbus / INV3</div>
+            </div>
+          </div>
+          <div class="detail-note">
+            FC bajo 140 = realmente recovery. Si subes de ahí, frena o camina.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day-row" onclick="toggleDay(this)">
+      <div class="day-row-head">
+        <div class="day-letter">D</div>
+        <div class="day-info">
+          <div class="day-info-top">
+            <div class="day-name">DOM · 10 MAY · LONG</div>
+            <div class="day-km">11 KM</div>
+          </div>
+          <div class="day-session">11 km Z2 + 1 km progresivo</div>
+        </div>
+        <div class="day-toggle">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="day-detail">
+        <div class="day-detail-inner">
+          <div class="detail-desc">
+            <strong>Estructura:</strong> 10 km a 5:15-5:30 con FC techo 155 + último 1 km progresivo SUAVE hasta 4:45-5:00. Pre (1h antes): avena + banano + café. Post: foam roller 10 min + desayuno grande.
+          </div>
+          <div class="detail-grid">
+            <div class="detail-cell">
+              <div class="detail-cell-label">DISTANCIA</div>
+              <div class="detail-cell-value">11 km</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">FC TECHO</div>
+              <div class="detail-cell-value">155 bpm</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">PACE BASE</div>
+              <div class="detail-cell-value">5:15–5:30</div>
+            </div>
+            <div class="detail-cell">
+              <div class="detail-cell-label">ZAPATILLA</div>
+              <div class="detail-cell-value">Invincible 3</div>
+            </div>
+          </div>
+          <div class="detail-note">
+            El progresivo es SUAVE (4:45-5:00). NO terminamos a 4:15 como el domingo pasado. Noche: enviar reporte semanal.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rules">
+    <div class="rules-title">REGLAS NO NEGOCIABLES</div>
+    <ul class="rules-list">
+      <li>FC techo 150 en Z2. Alarma Coros activa.</li>
+      <li>Long run NO termina a 4:15. Progresivo suave.</li>
+      <li>Cualquier dolor en rodilla = parar y avisar.</li>
+      <li>Fuerza martes y viernes en casa con bandas.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section>
+  <div class="section-head">
+    <div class="label">MÉTRICAS</div>
+  </div>
+  <div class="stats-grid">
+    <div class="metric">
+      <div class="metric-label">VOLUMEN SEM</div>
+      <div class="metric-value">35<span class="unit">km</span></div>
+      <div class="metric-extra">Plan de la semana</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">PROGRESO</div>
+      <div class="metric-value green">21<span class="unit">%</span></div>
+      <div class="metric-extra">3 de 14 semanas</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">RHR BASE</div>
+      <div class="metric-value">52<span class="unit">bpm</span></div>
+      <div class="metric-extra">Whoop 6 meses</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">FC MÁX</div>
+      <div class="metric-value red">199<span class="unit">bpm</span></div>
+      <div class="metric-extra">Medido en carrera</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">SUEÑO AVG</div>
+      <div class="metric-value">6.8<span class="unit">h</span></div>
+      <div class="metric-extra">Objetivo: 7.5 h</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">PESO</div>
+      <div class="metric-value">65<span class="unit">kg</span></div>
+      <div class="metric-extra">Mantener</div>
+    </div>
+  </div>
+
+  <div class="pr-card">
+    <div class="pr-card-label">RECORDS PERSONALES</div>
+    <div class="pr-row">
+      <div class="pr-dist">5 KM</div>
+      <div class="pr-time">18:58</div>
+    </div>
+    <div class="pr-row">
+      <div class="pr-dist">10 KM</div>
+      <div class="pr-time">41:00</div>
+    </div>
+    <div class="pr-row">
+      <div class="pr-dist">21.1 KM</div>
+      <div class="pr-time">1:29:50</div>
+    </div>
+  </div>
+</section>
+
+<!-- ZONES & PACES -->
+<section>
+  <div class="section-head">
+    <div class="label">ZONAS · PACES</div>
+  </div>
+  <div class="zone-card">
+    <div class="zone-row">
+      <div class="zone-bar z1"></div>
+      <div class="zone-info">
+        <div class="zone-name"><span class="zone-num">Z1</span><span class="zone-title">Recovery</span></div>
+        <div class="zone-desc">Trote regenerativo</div>
+      </div>
+      <div class="zone-bpm">&lt;139</div>
+    </div>
+    <div class="zone-row">
+      <div class="zone-bar z2"></div>
+      <div class="zone-info">
+        <div class="zone-name"><span class="zone-num">Z2</span><span class="zone-title">Aeróbico Base</span></div>
+        <div class="zone-desc">75-80% de tu volumen</div>
+      </div>
+      <div class="zone-bpm">140–155</div>
+    </div>
+    <div class="zone-row">
+      <div class="zone-bar z3"></div>
+      <div class="zone-info">
+        <div class="zone-name"><span class="zone-num">Z3</span><span class="zone-title">Aeróbico Moderado</span></div>
+        <div class="zone-desc">Progresivos</div>
+      </div>
+      <div class="zone-bpm">156–168</div>
+    </div>
+    <div class="zone-row">
+      <div class="zone-bar z4"></div>
+      <div class="zone-info">
+        <div class="zone-name"><span class="zone-num">Z4</span><span class="zone-title">Umbral</span></div>
+        <div class="zone-desc">Tempo · threshold</div>
+      </div>
+      <div class="zone-bpm">169–180</div>
+    </div>
+    <div class="zone-row">
+      <div class="zone-bar z5"></div>
+      <div class="zone-info">
+        <div class="zone-name"><span class="zone-num">Z5</span><span class="zone-title">VO2max</span></div>
+        <div class="zone-desc">Intervalos 3-5 min</div>
+      </div>
+      <div class="zone-bpm">181–194</div>
+    </div>
+    <div class="zone-row">
+      <div class="zone-bar z6"></div>
+      <div class="zone-info">
+        <div class="zone-name"><span class="zone-num">Z6</span><span class="zone-title">Anaeróbico</span></div>
+        <div class="zone-desc">Sprints</div>
+      </div>
+      <div class="zone-bpm">195+</div>
+    </div>
+  </div>
+
+  <div class="pace-card">
+    <div class="pace-row">
+      <div class="pace-name">Recovery</div>
+      <div class="pace-value">5:30–6:00</div>
+    </div>
+    <div class="pace-row">
+      <div class="pace-name">Easy / Base</div>
+      <div class="pace-value">5:15–5:40</div>
+    </div>
+    <div class="pace-row">
+      <div class="pace-name">Long run base</div>
+      <div class="pace-value">5:00–5:20</div>
+    </div>
+    <div class="pace-row target">
+      <div class="pace-name">Pace media</div>
+      <div class="pace-value">4:15</div>
+    </div>
+    <div class="pace-row">
+      <div class="pace-name">Tempo / Threshold</div>
+      <div class="pace-value">4:00–4:10</div>
+    </div>
+    <div class="pace-row">
+      <div class="pace-name">VO2max (1 km)</div>
+      <div class="pace-value">3:45–3:55</div>
+    </div>
+  </div>
+</section>
+
+<!-- NUTRICIÓN -->
+<section>
+  <div class="section-head">
+    <div class="label">NUTRICIÓN</div>
+  </div>
+
+  <div class="acc" id="acc-macros">
+    <div class="acc-head" onclick="toggleAcc('acc-macros')">
+      <div class="acc-title">Macros diarios</div>
+      <div class="acc-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="acc-content">
+      <div class="acc-body">
+        <div class="item-row">
+          <div class="item-name">CALORÍAS</div>
+          <div class="item-desc">2,800 (descanso) — 3,200 (long run)</div>
+          <div class="item-meta">43-49 KCAL/KG</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">PROTEÍNA</div>
+          <div class="item-desc">115-130 g · 4-5 comidas</div>
+          <div class="item-meta">1.8-2.0 G/KG · 17%</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">CARBOHIDRATOS</div>
+          <div class="item-desc">325-455 g · más en días duros</div>
+          <div class="item-meta">5-7 G/KG · 55%</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">GRASAS</div>
+          <div class="item-desc">~65 g · aceite oliva, aguacate, frutos secos</div>
+          <div class="item-meta">1.0 G/KG · 28%</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">AGUA</div>
+          <div class="item-desc">3.0-3.5 L base + 500 ml por hora de entreno</div>
+          <div class="item-meta">45-50 ML/KG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc" id="acc-meals">
+    <div class="acc-head" onclick="toggleAcc('acc-meals')">
+      <div class="acc-title">Día tipo (entreno AM)</div>
+      <div class="acc-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="acc-content">
+      <div class="acc-body">
+        <div class="item-row">
+          <div class="item-name">PRE-RUN · 5 AM</div>
+          <div class="item-desc">1 banano + sorbo café + 1 dátil</div>
+          <div class="item-meta">~150 KCAL</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">DESAYUNO POST · 7 AM</div>
+          <div class="item-desc">3 huevos + arepa con queso + avena con leche y fruta</div>
+          <div class="item-meta">~750 KCAL · P 40g · C 85g</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">MEDIA MAÑANA · 11 AM</div>
+          <div class="item-desc">Yogur griego con granola, miel y frutos rojos</div>
+          <div class="item-meta">~400 KCAL · P 25g · C 50g</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">ALMUERZO · 1 PM</div>
+          <div class="item-desc">Proteína 200g + carbo (1.5 tazas) + ensalada con aceite y aguacate</div>
+          <div class="item-meta">~850 KCAL · P 45g · C 100g</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">MERIENDA · 4 PM</div>
+          <div class="item-desc">Batido: whey + banano + mantequilla maní + leche</div>
+          <div class="item-meta">~450 KCAL · P 25-30g</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">CENA · 7 PM</div>
+          <div class="item-desc">Proteína 150g + carbo (1 taza) + vegetales + grasa</div>
+          <div class="item-meta">~700 KCAL · P 35g · C 60g</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc" id="acc-supps">
+    <div class="acc-head" onclick="toggleAcc('acc-supps')">
+      <div class="acc-title">Suplementación</div>
+      <div class="acc-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="acc-content">
+      <div class="acc-body">
+        <div class="item-row">
+          <div class="item-name">CREATINA · 5G</div>
+          <div class="item-desc">Cualquier hora con comida — reponer ya</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">WHEY PROTEIN · 25G</div>
+          <div class="item-desc">Post-entreno o tapar huecos del día</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">OMEGA 3 · 2G</div>
+          <div class="item-desc">Antiinflamatorio · clave para ITB</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">VITAMINA D3 · 2,000 UI</div>
+          <div class="item-desc">Con grasa en desayuno</div>
+        </div>
+        <div class="item-row">
+          <div class="item-name">MAGNESIO · 300-400MG</div>
+          <div class="item-desc">Antes de dormir · sueño + recuperación</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUERZA -->
+<section>
+  <div class="section-head">
+    <div class="label">FUERZA</div>
+  </div>
+
+  <div class="acc" id="acc-cira">
+    <div class="acc-head" onclick="toggleAcc('acc-cira')">
+      <div class="acc-title">Circuito A · Lunes/Martes</div>
+      <div class="acc-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="acc-content">
+      <div class="acc-body">
+        <div class="ex-list-meta">3 RONDAS · 45" / 15" · 90" ENTRE RONDAS</div>
+        <div class="ex">
+          <div class="ex-num">1</div>
+          <div class="ex-content">
+            <div class="ex-name">Sentadilla búlgara peso corporal</div>
+            <div class="ex-reps">10-12 reps por pierna</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">2</div>
+          <div class="ex-content">
+            <div class="ex-name">Peso muerto rumano una pierna</div>
+            <div class="ex-reps">10 reps por pierna</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">3</div>
+          <div class="ex-content">
+            <div class="ex-name">Remo invertido con banda</div>
+            <div class="ex-reps">12-15 reps</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">4</div>
+          <div class="ex-content">
+            <div class="ex-name">Clamshells con banda <span class="itb-tag">ITB</span></div>
+            <div class="ex-reps">15 por lado · glúteo medio</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">5</div>
+          <div class="ex-content">
+            <div class="ex-name">Plancha frontal</div>
+            <div class="ex-reps">45-60 segundos</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">6</div>
+          <div class="ex-content">
+            <div class="ex-name">Elevación talones una pierna</div>
+            <div class="ex-reps">15 reps cada pie</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc" id="acc-cirb">
+    <div class="acc-head" onclick="toggleAcc('acc-cirb')">
+      <div class="acc-title">Circuito B · Viernes</div>
+      <div class="acc-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="acc-content">
+      <div class="acc-body">
+        <div class="ex-list-meta">3 RONDAS · 45" / 15" · 90" ENTRE RONDAS</div>
+        <div class="ex">
+          <div class="ex-num">1</div>
+          <div class="ex-content">
+            <div class="ex-name">Sentadilla con salto</div>
+            <div class="ex-reps">10-12 reps</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">2</div>
+          <div class="ex-content">
+            <div class="ex-name">Zancadas alternas</div>
+            <div class="ex-reps">10 por pierna</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">3</div>
+          <div class="ex-content">
+            <div class="ex-name">Monster walks lateral con banda <span class="itb-tag">ITB</span></div>
+            <div class="ex-reps">12 pasos cada dirección</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">4</div>
+          <div class="ex-content">
+            <div class="ex-name">Pallof press con banda</div>
+            <div class="ex-reps">10 por lado</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">5</div>
+          <div class="ex-content">
+            <div class="ex-name">Plancha lateral</div>
+            <div class="ex-reps">30-40 seg por lado</div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-num">6</div>
+          <div class="ex-content">
+            <div class="ex-name">Puente glúteos una pierna</div>
+            <div class="ex-reps">10 por lado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOTAS -->
+<section>
+  <div class="section-head">
+    <div class="label">NOTAS</div>
+  </div>
+  <div class="notes-box">
+    <textarea class="notes-input" id="notes-input" placeholder="Cómo te sentiste hoy? Aprendizajes? Ajustes? Lo que necesites recordar..."></textarea>
+    <div class="notes-status" id="notes-status">GUARDADO</div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-quote">
+    "El Mateo de Medellín 1:29:50 lo construyó la disciplina, no el talento. Y ese mismo Mateo está acá."
+  </div>
+  <div class="footer-author">— COACH</div>
+</footer>
+
+</div>
+
+<script>
+  // Countdown
+  function updateCountdown() {
+    const raceDate = new Date('2026-07-26T08:00:00-05:00');
+    const now = new Date();
+    const diff = raceDate - now;
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    document.getElementById('days-count').textContent = days > 0 ? days : 0;
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+
+  // Day expand
+  function toggleDay(el) {
+    el.classList.toggle('open');
+  }
+
+  // Accordion
+  function toggleAcc(id) {
+    const acc = document.getElementById(id);
+    acc.classList.toggle('open');
+  }
+
+  // Highlight today + auto-open
+  function highlightToday() {
+    const today = new Date();
+    const dayMap = { 0: 6, 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5 };
+    const dayIdx = dayMap[today.getDay()];
+    const days = document.querySelectorAll('.day-row');
+    if (days[dayIdx] && !days[dayIdx].classList.contains('rest')) {
+      days[dayIdx].classList.add('today-day-row');
+      days[dayIdx].classList.add('open');
+    }
+  }
+  highlightToday();
+
+  // Notes (in-memory only)
+  const notesInput = document.getElementById('notes-input');
+  const notesStatus = document.getElementById('notes-status');
+  let saveTimer;
+  notesInput.addEventListener('input', () => {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      notesStatus.classList.add('show');
+      setTimeout(() => notesStatus.classList.remove('show'), 1500);
+    }, 800);
+  });
+</script>
+</body>
+</html>
